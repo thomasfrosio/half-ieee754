@@ -1335,11 +1335,13 @@ namespace half_float
 				(R==std::round_to_nearest) ? ((1<<(exp-1))-(~(m>>exp)&E)) :
 				(R==std::round_toward_infinity) ? (((1<<exp)-1)&((value>>15)-1)) :
 				(R==std::round_toward_neg_infinity) ? (((1<<exp)-1)&-(value>>15)) : 0))>>exp));
+			#if HALF_ERRHANDLING
 			if((!std::numeric_limits<T>::is_signed && (value&0x8000)) || (std::numeric_limits<T>::digits<16 &&
 				((value&0x8000) ? (-i<std::numeric_limits<T>::min()) : (i>std::numeric_limits<T>::max()))))
 				raise(FE_INVALID);
 			else if(I && exp > 0 && (m&((1<<exp)-1)))
 				raise(FE_INEXACT);
+			#endif
 			return static_cast<T>((value&0x8000) ? -i : i);
 		}
 
