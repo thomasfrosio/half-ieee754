@@ -2257,6 +2257,7 @@ namespace half_float
 		friend HALF_CONSTEXPR bool isless(half, half);
 		friend HALF_CONSTEXPR bool islessequal(half, half);
 		friend HALF_CONSTEXPR bool islessgreater(half, half);
+		friend HALF_CONSTEXPR half reinterpret_as_half(unsigned int bits) HALF_NOEXCEPT;
 		template<typename,typename,std::float_round_style> friend struct detail::half_caster;
 		friend class std::numeric_limits<half>;
 	#if HALF_ENABLE_CPP11_HASH
@@ -4458,6 +4459,10 @@ namespace half_float
 	inline HALF_CONSTEXPR bool islessgreater(half x, half y)
 	{
 		return x.data_!=y.data_ && ((x.data_|y.data_)&0x7FFF) && !isnan(x) && !isnan(y);
+	}
+
+	inline HALF_CONSTEXPR half reinterpret_as_half(unsigned int bits) HALF_NOEXCEPT {
+		return {detail::binary, bits};
 	}
 
 	/// Quiet check if unordered.
