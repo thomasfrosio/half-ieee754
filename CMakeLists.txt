@@ -9,6 +9,8 @@ include(GNUInstallDirs)
 
 # Create the target:
 add_library(half INTERFACE)
+add_library(half::half ALIAS half)
+
 target_include_directories(half
         INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
