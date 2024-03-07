@@ -622,7 +622,7 @@ namespace half_float
 		/// Raise floating-point exception.
 		/// \param flags exceptions to raise
 		/// \param cond condition to raise exceptions for
-		inline void raise(int HALF_UNUSED_NOERR(flags), bool HALF_UNUSED_NOERR(cond) = true)
+		HALF_CONSTEXPR_NOERR inline void raise(int HALF_UNUSED_NOERR(flags), bool HALF_UNUSED_NOERR(cond) = true)
 		{
 		#if HALF_ERRHANDLING
 			if(!cond)
@@ -1073,7 +1073,7 @@ namespace half_float
 		/// \return rounded half-precision value
 		/// \exception FE_OVERFLOW on overflows
 		/// \exception FE_INEXACT if value had to be rounded
-		template<std::float_round_style R,typename T> unsigned int int2half(T value)
+		template<std::float_round_style R,typename T> HALF_CONSTEXPR_NOERR unsigned int int2half(T value)
 		{
 			unsigned int bits = static_cast<unsigned>(value<0) << 15;
 			if(!value)
@@ -1314,7 +1314,7 @@ namespace half_float
 		/// \return rounded integer value
 		/// \exception FE_INVALID if value is not representable in type \a T
 		/// \exception FE_INEXACT if value had to be rounded and \a I is `true`
-		template<std::float_round_style R,bool E,bool I,typename T> T half2int(unsigned int value)
+		template<std::float_round_style R,bool E,bool I,typename T> HALF_CONSTEXPR_NOERR T half2int(unsigned int value)
 		{
 			unsigned int abs = value & 0x7FFF;
 			if(abs >= 0x7C00)
@@ -2298,11 +2298,11 @@ namespace half_float
 			static_assert(std::is_arithmetic<U>::value, "half_cast from non-arithmetic type unsupported");
 		#endif
 
-			static half cast(U arg) { return cast_impl(arg, is_float<U>()); };
+			static HALF_CONSTEXPR_NOERR half cast(U arg) { return cast_impl(arg, is_float<U>()); };
 
 		private:
 			static half cast_impl(U arg, true_type) { return half(binary, float2half<R>(arg)); }
-			static half cast_impl(U arg, false_type) { return half(binary, int2half<R>(arg)); }
+			static HALF_CONSTEXPR_NOERR half cast_impl(U arg, false_type) { return half(binary, int2half<R>(arg)); }
 		};
 		template<typename T,std::float_round_style R> struct half_caster<T,half,R>
 		{
@@ -2310,11 +2310,11 @@ namespace half_float
 			static_assert(std::is_arithmetic<T>::value, "half_cast to non-arithmetic type unsupported");
 		#endif
 
-			static T cast(half arg) { return cast_impl(arg, is_float<T>()); }
+			static HALF_CONSTEXPR_NOERR T cast(half arg) { return cast_impl(arg, is_float<T>()); }
 
 		private:
 			static T cast_impl(half arg, true_type) { return half2float<T>(arg.data_); }
-			static T cast_impl(half arg, false_type) { return half2int<R,true,true,T>(arg.data_); }
+			static HALF_CONSTEXPR_NOERR T cast_impl(half arg, false_type) { return half2int<R,true,true,T>(arg.data_); }
 		};
 		template<std::float_round_style R> struct half_caster<half,half,R>
 		{
@@ -4491,7 +4491,7 @@ namespace half_float
 	/// \return \a arg converted to destination type
 	/// \exception FE_INVALID if \a T is integer type and result is not representable as \a T
 	/// \exception FE_OVERFLOW, ...UNDERFLOW, ...INEXACT according to rounding
-	template<typename T,typename U> T half_cast(U arg) { return detail::half_caster<T,U>::cast(arg); }
+	template<typename T,typename U> HALF_CONSTEXPR_NOERR T half_cast(U arg) { return detail::half_caster<T,U>::cast(arg); }
 
 	/// Cast to or from half-precision floating-point number.
 	/// This casts between [half](\ref half_float::half) and any built-in arithmetic type. The values are converted
@@ -4507,7 +4507,7 @@ namespace half_float
 	/// \return \a arg converted to destination type
 	/// \exception FE_INVALID if \a T is integer type and result is not representable as \a T
 	/// \exception FE_OVERFLOW, ...UNDERFLOW, ...INEXACT according to rounding
-	template<typename T,std::float_round_style R,typename U> T half_cast(U arg) { return detail::half_caster<T,U,R>::cast(arg); }
+	template<typename T,std::float_round_style R,typename U> HALF_CONSTEXPR_NOERR T half_cast(U arg) { return detail::half_caster<T,U,R>::cast(arg); }
 	/// \}
 
 	/// \}
